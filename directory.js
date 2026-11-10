@@ -4,10 +4,15 @@
    One region at a time, with a pause between, so Overpass is never hammered.
    Usage: node directory.js [region ...]      (default: every region in regions.json) */
 const fs = require('fs'), path = require('path');
-const { get } = require('./lib/fetch');
+const { post } = require('./lib/fetch');
 const { writeJson, today } = require('./lib/util');
 
-const OVERPASS = 'https://overpass-api.de/api/interpreter';
+/* Several public Overpass servers run the same data; if one is busy we try the next. */
+const OVERPASS = [
+  'https://overpass-api.de/api/interpreter',
+  'https://overpass.kumi.systems/api/interpreter',
+  'https://overpass.osm.ch/api/interpreter'
+];
 const PAUSE_MS = 20000;         /* Overpass asks for gaps between queries; be generous */
 
 function query(area) {
@@ -65,8 +70,13 @@ async function main() {
 
   for (const region of regions) {
     process.stdout.write('  ' + region + ' … ');
-    const r = await get(OVERPASS + '?data=' + encodeURIComponent(query(region)), { skipRobots: true, timeout: 200000 });
-    if (!r.body) { console.log('failed (' + (r.error || r.status) + ')'); failed.push(region); await sleep(PAUSE_MS); continue; }
+    let r = { error: 'not tried' };
+    for (const endpoint of OVERPASS) {
+      r = await post(endpoint, 'data=' + encodeURIComponent(query(region)), { tries: 2 });
+      if (r.body) break;
+      process.stdout.write('(' + new URL(endpoint).host + ': ' + (r.error || r.status) + ') ');
+    }
+    if (!r.body) { console.log('failed'); failed.push(region); await sleep(PAUSE_MS); continue; }
     let rows = [];
     try { rows = parse(JSON.parse(r.body), region); }
     catch (e) { console.log('unreadable answer'); failed.push(region); await sleep(PAUSE_MS); continue; }
