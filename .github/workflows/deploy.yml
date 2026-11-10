@@ -1,0 +1,27 @@
+name: Publish schedules
+# The desktop scraper pushes to main; this copies the data onto the website so frames can read it.
+on:
+  push:
+    branches: [main]
+    paths: ['data/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sanity-check the data before publishing
+        run: node .github/check.js
+      - name: Publish to the data branch
+        run: |
+          git config user.name  "salah-os-bot"
+          git config user.email "noreply@users.noreply.github.com"
+          git checkout --orphan published
+          git rm -rq --cached . 
+          git add -f data
+          git commit -qm "Published $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -qf origin published

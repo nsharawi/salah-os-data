@@ -1,0 +1,11 @@
+[
+  {
+    "id": "osm:example",
+    "name": "Example Masjid",
+    "url": "https://example.org/prayer-times",
+    "adapter": "table",
+    "tz": "America/Los_Angeles",
+    "enabled": false,
+    "_note": "Copy this block per masjid. id should match the directory entry in data/masjids.json. Set enabled true."
+  }
+]
