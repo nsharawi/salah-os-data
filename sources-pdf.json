@@ -1,0 +1,30 @@
+[
+  {
+    "id": "mca",
+    "name": "Muslim Community Association (MCA)",
+    "address": "Scott Blvd, Santa Clara, CA",
+    "tz": "America/Los_Angeles",
+    "lat": 37.3772184,
+    "lon": -121.9594714,
+    "jumuah": ["12:15", "13:30"],
+    "source": "MCA published 2026 prayer calendar (PDF)",
+    "file": "pdfs/mca.txt",
+    "layout": "azaan-iqama-10",
+    "year": 2026,
+    "maghribIqama": 5
+  },
+  {
+    "id": "noor",
+    "name": "Masjid Al-Noor",
+    "address": "Catherine St, Santa Clara, CA",
+    "tz": "America/Los_Angeles",
+    "lat": 37.3504818,
+    "lon": -121.9554364,
+    "jumuah": ["12:30", "13:30"],
+    "source": "Masjid An-Noor published 2026 prayer calendar (PDF)",
+    "file": "pdfs/noor.txt",
+    "layout": "azaan-iqama-10",
+    "year": 2026,
+    "maghribIqama": 5
+  }
+]
